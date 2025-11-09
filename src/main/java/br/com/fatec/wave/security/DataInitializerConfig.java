@@ -3,14 +3,19 @@ package br.com.fatec.wave.security;
 import br.com.fatec.wave.model.UserRole;
 import br.com.fatec.wave.model.Usuario;
 import br.com.fatec.wave.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class DataInitializerConfig {
+
+    @Autowired
+    private Environment env;
 
     @Value("${app.admin1.email}")
     private String admin1Email;
@@ -27,6 +32,17 @@ public class DataInitializerConfig {
     @Bean
     public CommandLineRunner initializeData(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         return args -> {
+            // Bloco de Debug para Variáveis de Ambiente
+            System.out.println("==========================================================");
+            System.out.println("INICIANDO DEBUG DE VARIÁVEIS DE AMBIENTE NO RENDER");
+            System.out.println("spring.profiles.active: " + env.getProperty("spring.profiles.active"));
+            System.out.println("spring.datasource.jdbc-url: " + env.getProperty("spring.datasource.jdbc-url"));
+            System.out.println("spring.datasource.username: " + env.getProperty("spring.datasource.username"));
+            System.out.println("spring.datasource.password is present: " + (env.getProperty("spring.datasource.password") != null && !env.getProperty("spring.datasource.password").isEmpty()));
+            System.out.println("==========================================================");
+
+
+            // Lógica de criação dos usuários
             // Admin 1
             if (!usuarioRepository.existsByEmail(admin1Email)) {
                 Usuario admin1 = new Usuario();
